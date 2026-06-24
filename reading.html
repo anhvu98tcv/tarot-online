@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kết Quả Bói Bài Tarot</title>
+  <meta name="description" content="Xem kết quả bói bài Tarot của bạn — ý nghĩa lá bài chi tiết theo từng chủ đề tình yêu, công việc, tài chính, sức khỏe, học tập.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main class="page-reading">
+    <section class="reading-intro">
+      <h1>Chủ đề: <span id="topic-label">…</span></h1>
+      <p id="spread-label" class="spread-label">…</p>
+    </section>
+
+    <section class="cards-area" id="cards-area"></section>
+
+    <div class="reading-actions">
+      <button id="draw-btn" class="btn btn-primary">Rút bài</button>
+      <button id="redraw-btn" class="btn btn-secondary" hidden>Rút lại</button>
+      <a href="index.html" class="btn btn-link">Chọn chủ đề khác</a>
+    </div>
+  </main>
+
+  <div id="site-footer-donate"></div>
+
+  <script src="js/data/topics-data.js"></script>
+  <script src="js/data/cards-data.js"></script>
+  <script src="js/data/card-icons.js"></script>
+  <script src="js/partials.js"></script>
+  <script src="js/partials-inject.js"></script>
+  <script src="js/svg-render.js"></script>
+  <script src="js/deck.js"></script>
+  <script src="js/reading.js"></script>
+</body>
+</html>

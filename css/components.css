@@ -1,0 +1,280 @@
+/* ===== Buttons ===== */
+.btn {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: transform var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-bright));
+  color: var(--color-bg-deep);
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+}
+
+.btn-primary:disabled {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+  transform: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--color-gold);
+  color: var(--color-gold-bright);
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 175, 106, 0.1);
+}
+
+.btn-link {
+  background: transparent;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  padding: 12px 8px;
+}
+
+.btn-link:hover {
+  color: var(--color-gold-bright);
+}
+
+/* ===== Topic card ===== */
+.topic-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+}
+
+.topic-card:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.topic-card.is-selected {
+  border-color: var(--color-gold);
+  background: var(--color-bg-elevated);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+
+.topic-card-icon {
+  font-size: 1.6rem;
+  color: var(--color-gold-bright);
+}
+
+.topic-card-label {
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+/* ===== Spread card ===== */
+.spread-card {
+  display: block;
+  text-align: left;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  color: var(--color-text-primary);
+  width: 100%;
+  transition: border-color var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+}
+
+.spread-card:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.spread-card.is-selected {
+  border-color: var(--color-gold);
+  background: var(--color-bg-elevated);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+
+.spread-card-label {
+  font-weight: 600;
+  color: var(--color-gold-bright);
+  margin-bottom: var(--space-1);
+}
+
+.spread-card-desc {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ===== Tarot card ===== */
+.tarot-card-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 220px;
+}
+
+.card-position-label {
+  color: var(--color-gold);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.tarot-card {
+  width: 140px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.4));
+}
+
+.tarot-card.is-reversed .card-frame-svg {
+  transform: rotate(180deg);
+}
+
+.card-frame-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.card-outer-border {
+  fill: var(--color-bg-panel);
+  stroke: var(--color-gold);
+  stroke-width: 2;
+}
+
+.card-inner-border {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.card-numeral-text {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  fill: var(--color-gold-bright);
+}
+
+.card-name-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--color-text-primary);
+}
+
+.card-glyph .glyph-stroke {
+  fill: none;
+  stroke: var(--color-gold-bright);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card-glyph .glyph-fill {
+  fill: var(--color-gold-bright);
+  stroke: none;
+}
+
+.card-back-dot {
+  fill: var(--color-border);
+}
+
+.card-back-emblem-ring {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.5;
+}
+
+.card-back-emblem-moon {
+  fill: var(--color-gold);
+}
+
+/* ===== Card meaning ===== */
+.card-meaning {
+  text-align: center;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  width: 100%;
+}
+
+.card-meaning-name {
+  color: var(--color-gold-bright);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  margin-bottom: var(--space-1);
+}
+
+.card-meaning-traditional {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.card-meaning-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+  margin: var(--space-2) 0;
+}
+
+.keyword-chip {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+}
+
+.card-meaning-general {
+  font-style: italic;
+  font-size: 0.85rem;
+  margin-bottom: var(--space-2);
+}
+
+.card-meaning-orientation {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-reversed-tint);
+  border: 1px solid var(--color-reversed-tint);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  margin-bottom: var(--space-2);
+}
+
+.card-meaning-orientation.is-upright {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+.card-meaning-text {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ===== Donate placeholder text ===== */
+.placeholder {
+  color: var(--color-text-secondary);
+  border-bottom: 1px dashed var(--color-border);
+}

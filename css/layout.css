@@ -1,0 +1,206 @@
+/* ===== Header ===== */
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(13, 10, 31, 0.85);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+
+.site-header-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.site-logo {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--color-gold-bright);
+  letter-spacing: 0.02em;
+}
+
+.site-logo:hover {
+  text-decoration: none;
+  color: var(--color-gold);
+}
+
+.site-nav {
+  display: flex;
+  gap: var(--space-4);
+  font-size: 0.92rem;
+}
+
+/* ===== Page containers ===== */
+.page-home,
+.page-reading,
+.page-about {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-6);
+}
+
+/* ===== Hero ===== */
+.hero {
+  text-align: center;
+  padding: var(--space-4) 0 var(--space-5);
+}
+
+.hero-kicker {
+  color: var(--color-gold);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+.hero-subtitle {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ===== Topic & spread sections ===== */
+.topic-section,
+.spread-section {
+  margin-bottom: var(--space-5);
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.spread-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .topic-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .spread-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== Start action ===== */
+.start-action {
+  text-align: center;
+  padding-top: var(--space-3);
+}
+
+.start-hint {
+  font-size: 0.85rem;
+  margin-top: var(--space-2);
+  margin-bottom: 0;
+}
+
+/* ===== Reading page ===== */
+.reading-intro {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.spread-label {
+  margin-bottom: 0;
+}
+
+.cards-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.cards-area--multi {
+  flex-direction: column;
+}
+
+@media (min-width: 640px) {
+  .cards-area--multi {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+
+.reading-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .reading-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+/* ===== About page ===== */
+.about-content {
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .about-content {
+    padding: var(--space-5);
+  }
+}
+
+/* ===== Footer & donate ===== */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-6);
+  padding: var(--space-5) var(--space-4);
+}
+
+.donate-section {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.donate-qr-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-3) 0;
+}
+
+.donate-qr-image {
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  object-fit: cover;
+}
+
+.donate-bank-info p {
+  margin: var(--space-1) 0;
+  font-size: 0.9rem;
+}
+
+.site-footer-note {
+  text-align: center;
+  font-size: 0.8rem;
+  margin: var(--space-4) 0 0;
+}
