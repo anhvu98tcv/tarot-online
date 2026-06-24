@@ -129,7 +129,7 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  max-width: 220px;
+  max-width: 240px;
 }
 
 .card-position-label {
@@ -141,8 +141,14 @@
 }
 
 .tarot-card {
-  width: 140px;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.4));
+  width: 170px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+}
+
+@media (min-width: 640px) {
+  .tarot-card {
+    width: 200px;
+  }
 }
 
 .tarot-card.is-reversed .card-frame-svg {
@@ -192,18 +198,51 @@
   stroke: none;
 }
 
-.card-back-dot {
-  fill: var(--color-border);
+.card-back-wash {
+  fill: rgba(212, 175, 106, 0.05);
+  stroke: none;
 }
 
-.card-back-emblem-ring {
+.card-back-corners path {
+  fill: var(--color-gold);
+  opacity: 0.6;
+}
+
+.card-back-ring-outer {
   fill: none;
   stroke: var(--color-gold);
-  stroke-width: 1.5;
+  stroke-width: 0.6;
+  opacity: 0.55;
 }
 
-.card-back-emblem-moon {
-  fill: var(--color-gold);
+.card-back-ring-middle {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.3;
+}
+
+.card-back-ring-inner {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 0.5;
+}
+
+.card-back-ray {
+  stroke: var(--color-gold);
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.card-back-star {
+  fill: var(--color-gold-bright);
+  opacity: 0.95;
+}
+
+.card-back-jewel {
+  fill: var(--color-bg-deep);
+  stroke: var(--color-gold-bright);
+  stroke-width: 0.5;
 }
 
 /* ===== Card meaning ===== */
@@ -271,6 +310,113 @@
 .card-meaning-text {
   font-size: 0.95rem;
   margin: 0;
+}
+
+/* ===== Deck fan (picking interface) ===== */
+.deck-section {
+  margin-bottom: var(--space-5);
+}
+
+.deck-instruction {
+  text-align: center;
+  color: var(--color-gold);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  margin: 0 auto var(--space-4);
+  max-width: 480px;
+  min-height: 1.5em;
+}
+
+.deck-fan-wrapper {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  /* Padding top lớn để chứa lá bài được chọn nhô lên (translateY âm trong khung xoay) */
+  padding-top: 72px;
+}
+
+.deck-fan {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 190px;
+}
+
+.fan-card {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 70px;
+  height: 110px;
+  margin-left: -35px;
+  padding: 0;
+  background: none;
+  border: none;
+  transform-origin: 50% 290%;
+  transform: rotate(var(--fan-angle));
+  /* ease-out-quart cho cảm giác mượt mà, có quán tính nhẹ khi nhích lên */
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease,
+    opacity 0.3s ease;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+  cursor: pointer;
+  will-change: transform;
+}
+
+.fan-card:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.fan-card:hover:not(.is-selected) {
+  transform: rotate(var(--fan-angle)) translateY(-20px) scale(1.04);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
+  z-index: 100 !important;
+}
+
+.fan-card.is-selected {
+  transform: rotate(var(--fan-angle)) translateY(-50px) scale(1.08);
+  filter: drop-shadow(0 12px 22px rgba(212, 175, 106, 0.45));
+  z-index: 200 !important;
+}
+
+.fan-card .card-frame-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.deck-fan.is-locked .fan-card {
+  cursor: default;
+  pointer-events: none;
+}
+
+.deck-fan.is-locked .fan-card:not(.is-selected) {
+  opacity: 0.3;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35)) saturate(0.6);
+}
+
+@media (min-width: 640px) {
+  .deck-fan-wrapper {
+    padding-top: 96px;
+  }
+  .deck-fan {
+    max-width: 720px;
+    height: 250px;
+  }
+  .fan-card {
+    width: 110px;
+    height: 172px;
+    margin-left: -55px;
+    transform-origin: 50% 270%;
+  }
+  .fan-card:hover:not(.is-selected) {
+    transform: rotate(var(--fan-angle)) translateY(-28px) scale(1.04);
+  }
+  .fan-card.is-selected {
+    transform: rotate(var(--fan-angle)) translateY(-66px) scale(1.07);
+  }
 }
 
 /* ===== Donate placeholder text ===== */

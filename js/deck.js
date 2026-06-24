@@ -8,14 +8,3 @@ function shuffleArray(array) {
   }
   return result;
 }
-
-function drawCards(count) {
-  const shuffled = shuffleArray(TAROT_CARDS);
-  const drawn = shuffled.slice(0, count);
-  return drawn.map(function (card) {
-    return {
-      card: card,
-      isReversed: Math.random() < 0.5
-    };
-  });
-}

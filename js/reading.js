@@ -8,50 +8,122 @@ document.addEventListener("DOMContentLoaded", function () {
     spread.label + (spread.description ? " — " + spread.description : "");
 
   const cardsArea = document.getElementById("cards-area");
-  const drawBtn = document.getElementById("draw-btn");
+  const deckFan = document.getElementById("deck-fan");
+  const deckInstruction = document.getElementById("deck-instruction");
   const redrawBtn = document.getElementById("redraw-btn");
 
   if (spread.count > 1) {
     cardsArea.classList.add("cards-area--multi");
   }
 
-  const slots = [];
-  for (let i = 0; i < spread.count; i++) {
-    const slot = document.createElement("div");
-    slot.className = "tarot-card-slot";
+  let fanDeck = [];
+  let selectedFanIndices = [];
 
-    const positionLabel = spread.positions[i];
-    let html = "";
-    if (positionLabel) {
-      html += '<p class="card-position-label">' + positionLabel + "</p>";
-    }
-    html += '<div class="tarot-card">' + renderCardFrameSVG(null, false) + "</div>";
-    html += '<div class="card-meaning" hidden></div>';
-    slot.innerHTML = html;
-
-    cardsArea.appendChild(slot);
-    slots.push(slot);
+  function init() {
+    selectedFanIndices = [];
+    fanDeck = shuffleArray(TAROT_CARDS).map(function (card) {
+      return { card: card, isReversed: Math.random() < 0.5 };
+    });
+    cardsArea.innerHTML = "";
+    renderFan();
+    updateInstruction();
+    deckFan.classList.remove("is-locked");
+    redrawBtn.hidden = true;
   }
 
-  function performDraw() {
-    const drawn = drawCards(spread.count);
+  function renderFan() {
+    deckFan.innerHTML = "";
+    const total = fanDeck.length;
+    const arcDeg = window.innerWidth >= 640 ? 64 : 50;
+    const startAngle = -arcDeg / 2;
+    const step = total > 1 ? arcDeg / (total - 1) : 0;
 
-    drawBtn.disabled = true;
-    redrawBtn.disabled = true;
+    for (let i = 0; i < total; i++) {
+      const angle = startAngle + step * i;
+      const fanCard = document.createElement("button");
+      fanCard.type = "button";
+      fanCard.className = "fan-card";
+      fanCard.style.setProperty("--fan-angle", angle + "deg");
+      fanCard.style.zIndex = String(i);
+      fanCard.setAttribute("aria-label", "Lá bài thứ " + (i + 1));
+      fanCard.innerHTML = renderCardFrameSVG(null, false);
+      fanCard.addEventListener("click", function () {
+        handleFanClick(i, fanCard);
+      });
+      deckFan.appendChild(fanCard);
+    }
+  }
 
-    slots.forEach(function (slot, i) {
+  function updateInstruction() {
+    const picked = selectedFanIndices.length;
+    if (picked >= spread.count) {
+      deckInstruction.textContent = "Đây là thông điệp dành cho bạn.";
+      return;
+    }
+    if (spread.count === 1) {
+      deckInstruction.textContent = "Hãy tĩnh tâm và chọn 1 lá bài bên dưới.";
+      return;
+    }
+    if (picked === 0) {
+      deckInstruction.textContent =
+        "Hãy lần lượt chọn " + spread.count + " lá: " + spread.positions.join(" · ") + ".";
+    } else {
+      const nextLabel = spread.positions[picked];
+      deckInstruction.textContent =
+        "Chọn lá thứ " + (picked + 1) + " — " + nextLabel + ".";
+    }
+  }
+
+  function handleFanClick(fanIndex, cardEl) {
+    if (selectedFanIndices.length >= spread.count) return;
+
+    const existing = selectedFanIndices.indexOf(fanIndex);
+    if (existing >= 0) {
+      selectedFanIndices.splice(existing, 1);
+      cardEl.classList.remove("is-selected");
+      updateInstruction();
+      return;
+    }
+
+    selectedFanIndices.push(fanIndex);
+    cardEl.classList.add("is-selected");
+    updateInstruction();
+
+    if (selectedFanIndices.length === spread.count) {
+      deckFan.classList.add("is-locked");
+      revealAll();
+      redrawBtn.hidden = false;
+    }
+  }
+
+  function revealAll() {
+    selectedFanIndices.forEach(function (fanIndex, slotIdx) {
+      const result = fanDeck[fanIndex];
+
+      const slot = document.createElement("div");
+      slot.className = "tarot-card-slot";
+      const positionLabel = spread.positions[slotIdx];
+      let slotHtml = "";
+      if (positionLabel) {
+        slotHtml += '<p class="card-position-label">' + positionLabel + "</p>";
+      }
+      slotHtml += '<div class="tarot-card">' + renderCardFrameSVG(null, false) + "</div>";
+      slotHtml += '<div class="card-meaning" hidden></div>';
+      slot.innerHTML = slotHtml;
+      cardsArea.appendChild(slot);
+
       const tarotCardEl = slot.querySelector(".tarot-card");
       const meaningEl = slot.querySelector(".card-meaning");
-      const result = drawn[i];
+      const baseDelay = slotIdx * 220;
 
-      meaningEl.classList.remove("is-visible");
-      meaningEl.hidden = true;
-      tarotCardEl.classList.add("is-flipping");
+      setTimeout(function () {
+        tarotCardEl.classList.add("is-flipping");
+        tarotCardEl.classList.toggle("is-reversed", result.isReversed);
+      }, baseDelay);
 
       setTimeout(function () {
         tarotCardEl.innerHTML = renderCardFrameSVG(result.card, true);
-        tarotCardEl.classList.toggle("is-reversed", result.isReversed);
-      }, 300);
+      }, baseDelay + 300);
 
       setTimeout(function () {
         tarotCardEl.classList.remove("is-flipping");
@@ -74,17 +146,14 @@ document.addEventListener("DOMContentLoaded", function () {
         meaningEl.hidden = false;
         meaningEl.classList.add("is-visible");
 
-        if (i === slots.length - 1) {
-          drawBtn.disabled = false;
-          redrawBtn.disabled = false;
+        if (slotIdx === selectedFanIndices.length - 1) {
+          meaningEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
-      }, 620);
+      }, baseDelay + 620);
     });
-
-    drawBtn.hidden = true;
-    redrawBtn.hidden = false;
   }
 
-  drawBtn.addEventListener("click", performDraw);
-  redrawBtn.addEventListener("click", performDraw);
+  redrawBtn.addEventListener("click", init);
+
+  init();
 });

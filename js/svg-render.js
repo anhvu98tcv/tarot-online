@@ -22,21 +22,30 @@ function wrapCardName(name) {
 }
 
 function renderBackPatternSVG() {
-  let dots = "";
-  const rows = 6;
-  const cols = 4;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = 24 + c * 30;
-      const y = 28 + r * 31;
-      dots += '<circle cx="' + x + '" cy="' + y + '" r="1.6" class="card-back-dot"></circle>';
-    }
+  let rays = "";
+  const rayCount = 12;
+  for (let i = 0; i < rayCount; i++) {
+    const angle = i * (360 / rayCount);
+    rays += '<line x1="0" y1="-31" x2="0" y2="-25" transform="rotate(' + angle + ')" class="card-back-ray"/>';
   }
+
+  const cornerStar = 'M 0 -4.5 Q 1 -1 4.5 0 Q 1 1 0 4.5 Q -1 1 -4.5 0 Q -1 -1 0 -4.5 Z';
+  const corners =
+    '<path d="' + cornerStar + '" transform="translate(26,30)"/>' +
+    '<path d="' + cornerStar + '" transform="translate(114,30)"/>' +
+    '<path d="' + cornerStar + '" transform="translate(26,190)"/>' +
+    '<path d="' + cornerStar + '" transform="translate(114,190)"/>';
+
   return (
-    '<g class="card-back-pattern">' + dots + '</g>' +
+    '<rect x="11" y="11" width="118" height="198" rx="5" class="card-back-wash"/>' +
+    '<g class="card-back-corners">' + corners + '</g>' +
     '<g class="card-back-emblem" transform="translate(70,110)">' +
-      '<circle r="20" class="card-back-emblem-ring"></circle>' +
-      '<path d="M 6 -16 C -6 -16 -6 16 6 16 C -2 10 -2 -10 6 -16 Z" class="card-back-emblem-moon"></path>' +
+      '<circle r="34" class="card-back-ring-outer"/>' +
+      '<g class="card-back-rays">' + rays + '</g>' +
+      '<circle r="23" class="card-back-ring-middle"/>' +
+      '<circle r="17" class="card-back-ring-inner"/>' +
+      '<path d="M 0 -14 Q 4 -4 14 0 Q 4 4 0 14 Q -4 4 -14 0 Q -4 -4 0 -14 Z" class="card-back-star"/>' +
+      '<circle r="2.6" class="card-back-jewel"/>' +
     '</g>'
   );
 }
