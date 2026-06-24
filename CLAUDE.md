@@ -50,16 +50,17 @@ js/
   data/
     topics-data.js   TOPICS[] + SPREADS[] + getTopicById / getSpreadById
     cards-data.js    TAROT_CARDS[] — 22 cards with general + per-topic upright/reversed text
-    card-icons.js    CARD_ICONS{} — SVG primitives per card (drawn in local coords ~-24..24)
   partials.js        SITE_HEADER_HTML / DONATE_SECTION_HTML / SITE_FOOTER_HTML strings
   partials-inject.js injects header + footer on DOMContentLoaded
   home.js            index.html — topic/spread selection + start button
   reading.js         reading.html — reads URL params, draws cards, renders meanings
   deck.js            shuffleArray (Fisher–Yates utility used by reading.js)
-  svg-render.js      renderCardFrameSVG (face-up & face-down) + name wrapping
+  svg-render.js      renderCardFrameSVG — SVG mandala back / HTML <img> RWS face
 assets/
   favicon.svg
   qr/donate-qr.png   donate QR — placeholder image, see README
+  cards/             22 Rider-Waite-Smith JPEGs (public domain, from Wikimedia)
+                     named {card.id}.jpg — file lookup is by id in svg-render.js
 ```
 
 ## Data model
@@ -88,7 +89,7 @@ Every card must have entries for **all 6 topic ids** defined in `TOPICS` (`love`
 
 When adding a new topic: add it to `TOPICS` in [topics-data.js](js/data/topics-data.js) **and** add the matching key to `topics` on every card in [cards-data.js](js/data/cards-data.js).
 
-When adding a new card icon: add the glyph to `CARD_ICONS` in [card-icons.js](js/data/card-icons.js) using SVG primitives in local coords centered at (0,0), spanning roughly -24..24. The render layer translates to (70, 108) within the card frame.
+Face-up cards render the public-domain Rider-Waite-Smith deck images from `assets/cards/{card.id}.jpg` via an HTML `<img>` (not SVG `<image>` — that approach renders as blank when the parent `.tarot-card` has `filter: drop-shadow` applied). To swap to a different deck, replace the JPEGs keeping the same `{card.id}.jpg` filename.
 
 ## Styling conventions
 

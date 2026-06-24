@@ -5,22 +5,6 @@ function escapeXml(str) {
     .replace(/>/g, "&gt;");
 }
 
-function wrapCardName(name) {
-  if (name.length <= 14) return [name];
-  const words = name.split(" ");
-  const targetLen = Math.ceil(name.length / 2);
-  let line1 = "";
-  let line2 = "";
-  for (let i = 0; i < words.length; i++) {
-    if (!line2 && (line1 + " " + words[i]).trim().length <= targetLen + 2) {
-      line1 = (line1 + " " + words[i]).trim();
-    } else {
-      line2 = (line2 + " " + words[i]).trim();
-    }
-  }
-  return line2 ? [line1, line2] : [line1];
-}
-
 function renderBackPatternSVG() {
   let rays = "";
   const rayCount = 12;
@@ -50,34 +34,25 @@ function renderBackPatternSVG() {
   );
 }
 
+/* Face-up dùng <img> thường (không phải SVG <image>) vì SVG <image> bị bug rendering
+   khi parent có filter:drop-shadow trên một số trình duyệt — không lên pixel mặc dù
+   DOM/network đều đúng. <img> + CSS border-radius cho kết quả tin cậy hơn nhiều.
+   Face-down giữ SVG vì cần vẽ mandala vector. */
 function renderCardFrameSVG(card, faceUp) {
-  let innerContent;
-  let ariaLabel;
-
   if (faceUp && card) {
-    const nameLines = wrapCardName(card.nameVi);
-    let nameMarkup = "";
-    for (let i = 0; i < nameLines.length; i++) {
-      const y = 188 + i * 15;
-      nameMarkup += '<text x="70" y="' + y + '" text-anchor="middle" class="card-name-text">' + escapeXml(nameLines[i]) + '</text>';
-    }
-
-    const glyph = CARD_ICONS[card.icon] || "";
-    innerContent =
-      '<text x="70" y="34" text-anchor="middle" class="card-numeral-text">' + escapeXml(card.numeral) + '</text>' +
-      '<g class="card-glyph" transform="translate(70,108)">' + glyph + '</g>' +
-      nameMarkup;
-    ariaLabel = card.nameVi;
-  } else {
-    innerContent = renderBackPatternSVG();
-    ariaLabel = "Lá bài úp";
+    return (
+      '<img src="assets/cards/' + card.id + '.jpg"' +
+        ' alt="' + escapeXml(card.nameVi) + '"' +
+        ' class="card-face-img"' +
+        ' draggable="false">'
+    );
   }
 
   return (
-    '<svg viewBox="0 0 140 220" xmlns="http://www.w3.org/2000/svg" class="card-frame-svg" role="img" aria-label="' + escapeXml(ariaLabel) + '">' +
+    '<svg viewBox="0 0 140 220" xmlns="http://www.w3.org/2000/svg" class="card-frame-svg" role="img" aria-label="Lá bài úp">' +
       '<rect x="4" y="4" width="132" height="212" rx="10" class="card-outer-border"></rect>' +
       '<rect x="11" y="11" width="118" height="198" rx="5" class="card-inner-border"></rect>' +
-      innerContent +
+      renderBackPatternSVG() +
     '</svg>'
   );
 }

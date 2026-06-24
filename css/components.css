@@ -151,7 +151,8 @@
   }
 }
 
-.tarot-card.is-reversed .card-frame-svg {
+.tarot-card.is-reversed .card-frame-svg,
+.tarot-card.is-reversed .card-face-img {
   transform: rotate(180deg);
 }
 
@@ -159,6 +160,17 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+.card-face-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 2px solid var(--color-gold);
+  background: var(--color-bg-panel);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .card-outer-border {
@@ -188,7 +200,7 @@
 .card-glyph .glyph-stroke {
   fill: none;
   stroke: var(--color-gold-bright);
-  stroke-width: 2.5;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -196,6 +208,15 @@
 .card-glyph .glyph-fill {
   fill: var(--color-gold-bright);
   stroke: none;
+}
+
+.card-glyph .glyph-thin {
+  fill: none;
+  stroke: var(--color-gold-bright);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
 }
 
 .card-back-wash {
