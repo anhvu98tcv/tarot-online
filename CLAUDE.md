@@ -24,7 +24,7 @@ Three pages, all sharing a global header + donate footer that are injected at ru
 - `reading.html` — draws cards based on `?topic=<id>&spread=<id>` query params
 - `about.html` — static info page
 
-Page navigation passes state via URL query string only — there is no router and no localStorage.
+Page navigation passes state via URL query string only — there is no router. `localStorage` is used in exactly one place ([js/reading.js](js/reading.js)'s daily free-view counter / donate-nudge flag, see "Donate / QR" below) and never for navigation or page state.
 
 ### Script loading order matters
 
@@ -102,9 +102,23 @@ Face-up cards render the public-domain Rider-Waite-Smith deck images from `asset
 
 The footer's donate section is currently using placeholder bank info and a placeholder QR image. The README documents how to replace them. If the user asks to "update donate info", they likely mean editing the three `[Tên ngân hàng]` / `[Số tài khoản]` / `[Tên chủ tài khoản]` placeholders in `DONATE_SECTION_HTML` in [js/partials.js](js/partials.js) and overwriting `assets/qr/donate-qr.png`.
 
+The QR + bank info markup is factored out as `DONATE_DETAILS_HTML` in [js/partials.js](js/partials.js) so both the footer (`DONATE_SECTION_HTML`) and the in-reading donate nudge (built by `buildDonateNudgeHtml()` in [js/reading.js](js/reading.js)) share one source — edit `DONATE_DETAILS_HTML` once, not both places.
+
+### Daily free-view limit
+
+[js/reading.js](js/reading.js) caps results to 2 free views per day (per browser, via `localStorage` key `tarotViewLog`, resets at local midnight). From the 3rd view onward, the results page still renders in full but a donate-nudge banner is prepended to `#cards-area` with a "Tôi đã ủng hộ" button; clicking it sets `tarotDonateConfirmed` in `localStorage` permanently, after which the nudge never shows again. This is the one sanctioned use of `localStorage` in the project.
+
+## SEO
+
+- `robots.txt` and `sitemap.xml` live at the repo root. The base URL used throughout (canonical links, `og:url`, sitemap `<loc>`) is `https://anhvu98tcv.github.io/tarot-online/`, guessed from the `git remote` (no `CNAME` file exists, so this assumes default GitHub Pages hosting). **If the site ends up on a different domain, update the base URL in `robots.txt`, `sitemap.xml`, and the `<head>` of all 3 pages.**
+- `index.html` and `about.html` are indexable (`robots: index, follow`, listed in the sitemap, `WebSite`/`BreadcrumbList` JSON-LD).
+- `reading.html` is intentionally `noindex, follow` and left out of the sitemap — its content is a random draw per visit, so there's no stable page for a search engine to index. It still carries canonical/OG/Twitter tags so shared links unfurl nicely on social platforms even though it isn't indexed.
+- `og:image`/`twitter:image` on all 3 pages currently point at `assets/cards/sun.jpg` (a portrait card image) as a placeholder — swap in a proper 1200×630 branded banner when one exists.
+
 ## Things to avoid
 
 - Don't introduce a build step, bundler, or framework — the project is intentionally zero-dependency.
 - Don't switch to ES modules; everything relies on global names across script tags.
 - Don't reorder the heading font stack (see Cambria note above).
 - Don't add a topic without backfilling all 22 cards' `topics` entries.
+- Don't remove the `noindex` on `reading.html` or add it to the sitemap — its content isn't stable enough to index.
