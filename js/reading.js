@@ -3,18 +3,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const topic = getTopicById(params.get("topic")) || getTopicById("general");
   const spread = getSpreadById(params.get("spread")) || getSpreadById("1");
 
-  document.getElementById("topic-label").textContent = topic.label;
-  document.getElementById("spread-label").textContent =
+  const INTRO_DEFAULT = "Chọn chủ đề";
+
+  const introHeading = document.getElementById("intro-heading");
+  const topicLabel = document.getElementById("topic-label");
+  const spreadLabel = document.getElementById("spread-label");
+  topicLabel.textContent = topic.label;
+  spreadLabel.textContent =
     spread.label + (spread.description ? " — " + spread.description : "");
 
+  const deckSection = document.getElementById("deck-section");
   const cardsArea = document.getElementById("cards-area");
   const deckFan = document.getElementById("deck-fan");
   const deckInstruction = document.getElementById("deck-instruction");
+  const viewResultsBtn = document.getElementById("view-results-btn");
   const redrawBtn = document.getElementById("redraw-btn");
-
-  if (spread.count > 1) {
-    cardsArea.classList.add("cards-area--multi");
-  }
+  const disclaimerNote = document.getElementById("disclaimer-note");
 
   let fanDeck = [];
   let selectedFanIndices = [];
@@ -24,11 +28,23 @@ document.addEventListener("DOMContentLoaded", function () {
     fanDeck = shuffleArray(TAROT_CARDS).map(function (card) {
       return { card: card, isReversed: Math.random() < 0.5 };
     });
+
+    introHeading.textContent = INTRO_DEFAULT;
+    spreadLabel.hidden = false;
+    viewResultsBtn.hidden = true;
+    viewResultsBtn.classList.remove("is-entering");
+    redrawBtn.hidden = true;
+    disclaimerNote.hidden = true;
+
     cardsArea.innerHTML = "";
+    cardsArea.className = "cards-area";
+
+    deckSection.hidden = false;
+    deckSection.classList.remove("is-leaving");
+    deckFan.classList.remove("is-locked");
+
     renderFan();
     updateInstruction();
-    deckFan.classList.remove("is-locked");
-    redrawBtn.hidden = true;
   }
 
   function renderFan() {
@@ -91,30 +107,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (selectedFanIndices.length === spread.count) {
       deckFan.classList.add("is-locked");
-      revealAll();
-      redrawBtn.hidden = false;
+      revealPreview();
     }
   }
 
-  function revealAll() {
-    selectedFanIndices.forEach(function (fanIndex, slotIdx) {
-      const result = fanDeck[fanIndex];
+  function pickedCards() {
+    return selectedFanIndices.map(function (fanIndex) { return fanDeck[fanIndex]; });
+  }
 
+  function formatDateVi(date) {
+    const pad = function (n) { return String(n).padStart(2, "0"); };
+    return pad(date.getDate()) + "/" + pad(date.getMonth() + 1) + "/" + date.getFullYear();
+  }
+
+  // Stage 2: chosen cards flip face-up, fanned out, captioned — no meaning text yet.
+  function revealPreview() {
+    const picked = pickedCards();
+    const mid = (picked.length - 1) / 2;
+
+    setTimeout(function () {
+      deckSection.classList.add("is-leaving");
+      setTimeout(function () { deckSection.hidden = true; }, 360);
+    }, 500);
+
+    cardsArea.innerHTML = "";
+    cardsArea.className = "cards-area cards-area--preview";
+
+    picked.forEach(function (result, idx) {
       const slot = document.createElement("div");
-      slot.className = "tarot-card-slot";
-      const positionLabel = spread.positions[slotIdx];
-      let slotHtml = "";
+      slot.className = "picked-card";
+      const angle = picked.length > 1 ? (idx - mid) * 6 : 0;
+      slot.style.setProperty("--pick-angle", angle + "deg");
+      slot.style.setProperty("--pick-z", String(picked.length - Math.abs(idx - mid)));
+      slot.style.animationDelay = (idx * 280) + "ms";
+
+      const positionLabel = spread.positions[idx];
+      let html = "";
       if (positionLabel) {
-        slotHtml += '<p class="card-position-label">' + positionLabel + "</p>";
+        html += '<p class="card-position-label">' + positionLabel + "</p>";
       }
-      slotHtml += '<div class="tarot-card">' + renderCardFrameSVG(null, false) + "</div>";
-      slotHtml += '<div class="card-meaning" hidden></div>';
-      slot.innerHTML = slotHtml;
+      html +=
+        '<p class="picked-card-caption">' + result.card.nameVi +
+        ' <span class="picked-card-orientation">(Lá bài ' +
+        (result.isReversed ? "ngược" : "xuôi") + ")</span></p>";
+      html += '<div class="tarot-card">' + renderCardFrameSVG(null, false) + "</div>";
+      slot.innerHTML = html;
       cardsArea.appendChild(slot);
 
       const tarotCardEl = slot.querySelector(".tarot-card");
-      const meaningEl = slot.querySelector(".card-meaning");
-      const baseDelay = slotIdx * 220;
+      const baseDelay = idx * 480;
 
       setTimeout(function () {
         tarotCardEl.classList.add("is-flipping");
@@ -127,32 +168,76 @@ document.addEventListener("DOMContentLoaded", function () {
 
       setTimeout(function () {
         tarotCardEl.classList.remove("is-flipping");
+        tarotCardEl.classList.add("is-settling");
+      }, baseDelay + 620);
+    });
 
+    const btnDelay = picked.length * 480 + 700;
+    setTimeout(function () {
+      viewResultsBtn.hidden = false;
+      viewResultsBtn.classList.add("is-entering");
+    }, btnDelay);
+  }
+
+  // Stage 3: full meaning text, image left / text right per card.
+  function showResults() {
+    const picked = pickedCards();
+
+    introHeading.textContent = "Kết quả bói Tarot: " + formatDateVi(new Date());
+    spreadLabel.hidden = true;
+    viewResultsBtn.hidden = true;
+
+    cardsArea.classList.add("is-leaving");
+
+    setTimeout(function () {
+      cardsArea.innerHTML = "";
+      cardsArea.className = "cards-area cards-area--results";
+
+      picked.forEach(function (result, idx) {
         const orientation = result.isReversed ? "reversed" : "upright";
         const topicMeaning = result.card.topics[topic.id][orientation];
         const generalMeaning = result.card.general[orientation];
         const keywordsHtml = result.card.keywords
           .map(function (kw) { return '<span class="keyword-chip">' + kw + "</span>"; })
           .join("");
+        const positionLabel = spread.positions[idx];
 
-        meaningEl.innerHTML =
-          '<p class="card-meaning-name">' + result.card.nameVi +
-            ' <span class="card-meaning-traditional">(' + result.card.nameTraditional + ')</span></p>' +
-          '<span class="card-meaning-orientation ' + (result.isReversed ? "" : "is-upright") + '">' +
-            (result.isReversed ? "Ngược" : "Xuôi") + '</span>' +
-          '<div class="card-meaning-keywords">' + keywordsHtml + '</div>' +
-          '<p class="card-meaning-general">' + generalMeaning + '</p>' +
-          '<p class="card-meaning-text">' + topicMeaning + '</p>';
-        meaningEl.hidden = false;
-        meaningEl.classList.add("is-visible");
+        const row = document.createElement("div");
+        row.className = "result-row";
+        row.style.animationDelay = (idx * 130) + "ms";
 
-        if (slotIdx === selectedFanIndices.length - 1) {
-          meaningEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        let mediaHtml = "";
+        if (positionLabel) {
+          mediaHtml += '<p class="card-position-label">' + positionLabel + "</p>";
         }
-      }, baseDelay + 620);
-    });
+        mediaHtml +=
+          '<div class="tarot-card' + (result.isReversed ? " is-reversed" : "") + '">' +
+            renderCardFrameSVG(result.card, true) +
+          "</div>" +
+          '<p class="card-meaning-name">' + result.card.nameVi +
+            ' <span class="card-meaning-traditional">(' + result.card.nameTraditional + ")</span></p>" +
+          '<span class="card-meaning-orientation ' + (result.isReversed ? "" : "is-upright") + '">' +
+            (result.isReversed ? "Ngược" : "Xuôi") + "</span>";
+
+        const bodyHtml =
+          '<div class="card-meaning-keywords">' + keywordsHtml + "</div>" +
+          '<p class="card-meaning-general">' + generalMeaning + "</p>" +
+          '<p class="card-meaning-text">' + topicMeaning + "</p>";
+
+        row.innerHTML =
+          '<div class="result-row-media">' + mediaHtml + "</div>" +
+          '<div class="result-row-body">' + bodyHtml + "</div>";
+
+        cardsArea.appendChild(row);
+      });
+
+      redrawBtn.hidden = false;
+      disclaimerNote.hidden = false;
+      cardsArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 260);
   }
 
+  viewResultsBtn.addEventListener("click", showResults);
   redrawBtn.addEventListener("click", init);
 
   init();

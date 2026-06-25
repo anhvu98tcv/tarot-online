@@ -123,16 +123,36 @@
   margin-bottom: var(--space-5);
 }
 
-.cards-area--multi {
+.cards-area--results {
+  gap: var(--space-6);
+}
+
+.result-row {
   flex-direction: column;
+  align-items: center;
+}
+
+.result-row-media {
+  width: 100%;
 }
 
 @media (min-width: 640px) {
-  .cards-area--multi {
+  .result-row {
     flex-direction: row;
     align-items: flex-start;
-    justify-content: center;
   }
+
+  .result-row-media {
+    width: 200px;
+  }
+
+  .result-row-body {
+    flex: 1;
+  }
+}
+
+.view-results-action {
+  text-align: center;
 }
 
 .reading-actions {

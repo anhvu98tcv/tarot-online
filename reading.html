@@ -17,11 +17,12 @@
 
   <main class="page-reading">
     <section class="reading-intro">
-      <h1>Chủ đề: <span id="topic-label">…</span></h1>
+      <h1 id="intro-heading">Chọn chủ đề</h1>
+      <span class="topic-pill" id="topic-label">…</span>
       <p id="spread-label" class="spread-label">…</p>
     </section>
 
-    <section class="deck-section">
+    <section class="deck-section" id="deck-section">
       <p class="deck-instruction" id="deck-instruction"></p>
       <div class="deck-fan-wrapper">
         <div class="deck-fan" id="deck-fan"></div>
@@ -29,6 +30,23 @@
     </section>
 
     <section class="cards-area" id="cards-area"></section>
+
+    <div class="view-results-action">
+      <button id="view-results-btn" class="btn btn-primary" hidden>
+        <svg class="btn-icon" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"></circle>
+          <line x1="13.3" y1="13.3" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        Xem kết quả
+      </button>
+    </div>
+
+    <p class="disclaimer-note" id="disclaimer-note" hidden>
+      Lưu ý: Đây là góc nhìn mang tính chất giải trí, tham khảo và chiêm nghiệm cá nhân —
+      không phải lời khẳng định chắc chắn về tương lai, và không nên thay thế cho các quyết định
+      quan trọng về tài chính, sức khỏe hay pháp lý. Xem thêm tại trang
+      <a href="about.html">Giới thiệu</a>.
+    </p>
 
     <div class="reading-actions">
       <button id="redraw-btn" class="btn btn-secondary" hidden>Rút lại</button>
