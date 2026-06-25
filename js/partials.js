@@ -10,18 +10,21 @@ const SITE_HEADER_HTML =
     '</div>' +
   '</header>';
 
+const DONATE_DETAILS_HTML =
+  '<div class="donate-qr-wrapper">' +
+    '<img src="assets/qr/donate-qr.png" alt="Mã QR chuyển khoản ủng hộ" class="donate-qr-image">' +
+  '</div>' +
+  '<div class="donate-bank-info">' +
+    '<p><strong>Ngân hàng:</strong> <span class="placeholder">[Tên ngân hàng]</span></p>' +
+    '<p><strong>Số tài khoản:</strong> <span class="placeholder">[Số tài khoản]</span></p>' +
+    '<p><strong>Chủ tài khoản:</strong> <span class="placeholder">[Tên chủ tài khoản]</span></p>' +
+  '</div>';
+
 const DONATE_SECTION_HTML =
   '<section class="donate-section" id="donate">' +
     '<h3>Ủng hộ website</h3>' +
     '<p class="donate-message">Nếu bạn thấy trang web hữu ích, hãy ủng hộ để mình duy trì và phát triển thêm nhé. Cảm ơn bạn rất nhiều!</p>' +
-    '<div class="donate-qr-wrapper">' +
-      '<img src="assets/qr/donate-qr.png" alt="Mã QR chuyển khoản ủng hộ" class="donate-qr-image">' +
-    '</div>' +
-    '<div class="donate-bank-info">' +
-      '<p><strong>Ngân hàng:</strong> <span class="placeholder">[Tên ngân hàng]</span></p>' +
-      '<p><strong>Số tài khoản:</strong> <span class="placeholder">[Số tài khoản]</span></p>' +
-      '<p><strong>Chủ tài khoản:</strong> <span class="placeholder">[Tên chủ tài khoản]</span></p>' +
-    '</div>' +
+    DONATE_DETAILS_HTML +
   '</section>';
 
 const SITE_FOOTER_HTML =

@@ -120,6 +120,64 @@ document.addEventListener("DOMContentLoaded", function () {
     return pad(date.getDate()) + "/" + pad(date.getMonth() + 1) + "/" + date.getFullYear();
   }
 
+  const VIEW_LOG_KEY = "tarotViewLog";
+  const DONATE_CONFIRMED_KEY = "tarotDonateConfirmed";
+  const FREE_VIEWS_PER_DAY = 2;
+
+  function hasConfirmedDonate() {
+    try {
+      return localStorage.getItem(DONATE_CONFIRMED_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Records today's view and reports whether the free daily quota has been used up.
+  // Falls back to "within quota" if storage is unavailable (private mode, quota, etc),
+  // and never counts against someone who has already confirmed a donation.
+  function recordViewAndCheckLimit() {
+    if (hasConfirmedDonate()) return false;
+
+    const todayKey = formatDateVi(new Date());
+    let log = { date: todayKey, count: 0 };
+    try {
+      const stored = JSON.parse(localStorage.getItem(VIEW_LOG_KEY));
+      if (stored && stored.date === todayKey && typeof stored.count === "number") {
+        log = stored;
+      }
+      log.count += 1;
+      localStorage.setItem(VIEW_LOG_KEY, JSON.stringify(log));
+    } catch (e) {
+      return false;
+    }
+    return log.count > FREE_VIEWS_PER_DAY;
+  }
+
+  function confirmDonate() {
+    try {
+      localStorage.setItem(DONATE_CONFIRMED_KEY, "1");
+    } catch (e) {
+      // Storage unavailable — the thank-you still shows for this view.
+    }
+    const nudge = document.querySelector(".donate-nudge");
+    if (nudge) {
+      nudge.innerHTML =
+        '<p class="donate-message">Cảm ơn bạn đã ủng hộ Tarot Huyền Bí! Chúc bạn có những trải nghiệm thật ý nghĩa.</p>';
+    }
+  }
+
+  function buildDonateNudgeHtml() {
+    return (
+      '<div class="donate-section donate-nudge">' +
+        "<h3>Ủng hộ website</h3>" +
+        '<p class="donate-message">Bạn đã xem khá nhiều lượt hôm nay — nếu trang web mang lại điều gì đó hữu ích cho bạn, ' +
+        "hãy ủng hộ mình một chút để có thêm động lực duy trì và phát triển thêm nhé. Cảm ơn bạn rất nhiều!</p>" +
+        DONATE_DETAILS_HTML +
+        '<button type="button" id="confirm-donate-btn" class="btn btn-secondary">Tôi đã ủng hộ</button>' +
+      "</div>"
+    );
+  }
+
   // Stage 2: chosen cards flip face-up, fanned out, captioned — no meaning text yet.
   function revealPreview() {
     const picked = pickedCards();
@@ -182,6 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Stage 3: full meaning text, image left / text right per card.
   function showResults() {
     const picked = pickedCards();
+    const overLimit = recordViewAndCheckLimit();
 
     introHeading.textContent = "Kết quả bói Tarot: " + formatDateVi(new Date());
     spreadLabel.hidden = true;
@@ -190,8 +249,12 @@ document.addEventListener("DOMContentLoaded", function () {
     cardsArea.classList.add("is-leaving");
 
     setTimeout(function () {
-      cardsArea.innerHTML = "";
+      cardsArea.innerHTML = overLimit ? buildDonateNudgeHtml() : "";
       cardsArea.className = "cards-area cards-area--results";
+
+      if (overLimit) {
+        document.getElementById("confirm-donate-btn").addEventListener("click", confirmDonate);
+      }
 
       picked.forEach(function (result, idx) {
         const orientation = result.isReversed ? "reversed" : "upright";
